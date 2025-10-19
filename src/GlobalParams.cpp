@@ -60,3 +60,6 @@ PowerConfig GlobalParams::power_configuration;
 // out of yaml configuration
 bool GlobalParams::ascii_monitor;
 int GlobalParams::channel_selection;
+int GlobalParams::hsan_window_size = 100;
+double GlobalParams::hsan_probe_threshold = 0.1;
+double GlobalParams::hsan_isolate_threshold = 0.5;

@@ -72,6 +72,15 @@ SC_MODULE(Router)
     unsigned long routed_flits;
     RoutingAlgorithm * routingAlgorithm; 
     SelectionStrategy * selectionStrategy; 
+
+    // HSAN security state and counters
+    enum RouterState { NORMAL, PROBE, ISOLATE };
+    RouterState current_state = NORMAL;
+    int injection_flits_count = 0;
+    int retry_count = 0;
+    int hsan_cycle_counter = 0;
+    void update_state();
+    RouterState get_current_state() const { return current_state; }
     
     // Functions
 

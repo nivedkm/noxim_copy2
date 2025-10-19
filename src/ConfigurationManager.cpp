@@ -93,6 +93,10 @@ void loadConfiguration() {
     GlobalParams::winoc_dst_hops = readParam<int>(config, "winoc_dst_hops",0);
     GlobalParams::use_powermanager = readParam<bool>(config, "use_wirxsleep");
     
+    // HSAN security extensions
+    GlobalParams::hsan_window_size = readParam<int>(config, "hsan_window_size", 100);
+    GlobalParams::hsan_probe_threshold = readParam<double>(config, "hsan_probe_threshold", 0.1);
+    GlobalParams::hsan_isolate_threshold = readParam<double>(config, "hsan_isolate_threshold", 0.5);
 
     set<int> channelSet;
 
@@ -605,6 +609,12 @@ void parseCmdLine(int arg_num, char *arg_vet[])
 		// -config is managed from configure function
 		// i++ skips the configuration file name 
 		i++;
+	    else if (!strcmp(arg_vet[i], "-hsan_window"))
+        GlobalParams::hsan_window_size = atoi(arg_vet[++i]);
+    else if (!strcmp(arg_vet[i], "-hsan_probe"))
+        GlobalParams::hsan_probe_threshold = atof(arg_vet[++i]);
+    else if (!strcmp(arg_vet[i], "-hsan_isolate"))
+        GlobalParams::hsan_isolate_threshold = atof(arg_vet[++i]);
 	    else {
 		cerr << "Error: Invalid option: " << arg_vet[i] << endl;
 		exit(1);

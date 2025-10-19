@@ -69,6 +69,10 @@ void Router::rxProcess()
 		    // if a new flit is injected from local PE
 		    if (received_flit.src_id == local_id)
 			power.networkInterface();
+
+		    if (i == DIRECTION_LOCAL) {
+			injection_flits_count++;
+		    }
 		}
 
 		else  // buffer full
@@ -260,6 +264,7 @@ void Router::txProcess()
 		      if (flit.flit_type == FLIT_TYPE_HEAD)
 			  reservation_table.release(i,flit.vc_id,o);
 			  */
+		      retry_count++;
 		  }
 	      }
 	  } // if not reserved 
@@ -297,6 +302,10 @@ void Router::perCycleUpdate()
     if (reset.read()) {
 	for (int i = 0; i < DIRECTIONS + 1; i++)
 	    free_slots[i].write(buffer[i][DEFAULT_VC].GetMaxBufferSize());
+        hsan_cycle_counter = 0;
+        injection_flits_count = 0;
+        retry_count = 0;
+        current_state = NORMAL;
     } else {
         selectionStrategy->perCycleUpdate(this);
 
@@ -311,6 +320,12 @@ void Router::perCycleUpdate()
 	}
 
 	power.leakageLinkRouter2Hub();
+        // HSAN: update state every window
+        hsan_cycle_counter++;
+        if (hsan_cycle_counter >= GlobalParams::hsan_window_size) {
+            update_state();
+            hsan_cycle_counter = 0;
+        }
     }
 }
 
@@ -657,4 +672,17 @@ bool Router::connectedHubs(int src_hub, int dst_hub) {
         return false;
     else
         return true;
+}
+
+void Router::update_state() {
+    double anomaly_metric = (double)retry_count / (double)GlobalParams::hsan_window_size;
+    if (anomaly_metric >= GlobalParams::hsan_isolate_threshold) {
+        current_state = ISOLATE;
+    } else if (anomaly_metric >= GlobalParams::hsan_probe_threshold) {
+        current_state = PROBE;
+    } else {
+        current_state = NORMAL;
+    }
+    injection_flits_count = 0;
+    retry_count = 0;
 }

@@ -57,7 +57,7 @@ using namespace std;
 // Routing algorithms
 #define ROUTING_DYAD           "DYAD"
 #define ROUTING_TABLE_BASED    "TABLE_BASED"
-
+#define ROUTING_HSAN           "HSAN_ROUTING"
 
 // Channel selection 
 #define CHSEL_RANDOM 0
@@ -185,6 +185,10 @@ struct GlobalParams {
     // out of yaml configuration
     static bool ascii_monitor;
     static int channel_selection;
+    // HSAN security extensions (only essential)
+    static int hsan_window_size;
+    static double hsan_probe_threshold;
+    static double hsan_isolate_threshold;
 };
 
 #endif
