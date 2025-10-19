@@ -1,3 +1,4 @@
+git remote add origin https://github.com/yourusername/noxim_copy2.git
 sc_trace.lo: ../../../../src/sysc/tracing/sc_trace.cpp \
  /usr/include/stdc-predef.h \
  /usr/lib/gcc/x86_64-linux-gnu/13/include/stdarg.h /usr/include/stdio.h \
